@@ -1,4 +1,4 @@
-# large enterprise with 2 sites connected via tunnel
+# Large enterprise topology with 2 remote sites connected via tunnel
 - site one users
 - site two servers admin
 
@@ -6,40 +6,24 @@
 ######### MAIN SITE ########
 
 
-# VPC1-8 Configure according to vlan
-ip <targetip/cidr> <gateway>
+# Ubuntu Docker nodes
 
-# VPC1
-ip 10.1.1.10/24 10.1.1.1
-
-# VPC2
-ip 10.1.1.11/24 10.1.1.1
-
-# VPC3
-ip 20.1.1.10/24 20.1.1.1
-
-# VP4
-ip 20.1.1.11/24 20.1.1.1
-
-# VPC5
-ip 30.1.1.10/24 30.1.1.1
-
-# VPC6
-ip 30.1.1.11/24 30.1.1.1
-
-# VPC7
-ip 40.1.1.10/24 40.1.1.1
-
-# VPC8
-ip 40.1.1.11/24 40.1.1.1
+# DHCP config for eth0
+auto eth0
+iface eth0 inet dhcp
+	hostname C1-8
 
 
 # Internet Router
 
 configure terminal
 hostname Internet
-interface loopback 1
-ip address 8.8.8.8 255.255.255.0
+ip domain-lookup
+ip name-server 8.8.8.8
+
+
+interface loopback 0
+ip address 1.1.3.1 255.2552.255.255
 
 interface g0/0
 no shutdown
