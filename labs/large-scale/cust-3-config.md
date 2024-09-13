@@ -15,6 +15,7 @@ iface eth0 inet dhcp
 
 
 # Internet Router
+```
 
 configure terminal
 hostname Internet
@@ -40,10 +41,10 @@ wr
 
 
 
-
+```
 
 # Access-Switch1
-
+```
 enable
 configure terminal
 hostname Access-Switch1
@@ -62,10 +63,10 @@ vtp domain ccnp
 end
 wr
 
-
+```
 
 # Access-Switch2
-
+```
 enable
 configure terminal
 hostname Access-Switch2
@@ -83,9 +84,9 @@ end
 wr
 
 
-
+```
 # Access-Switch3
-
+```
 enable
 configure terminal
 hostname Access-Switch3
@@ -102,9 +103,9 @@ exit
 end
 wr
 
-
+```
 # Access-Switch4
-
+```
 enable
 configure terminal
 hostname Access-Switch4
@@ -120,10 +121,10 @@ no shutdown
 exit
 end
 wr
-
+```
 
 # SW1
-
+```
 enable
 configure terminal
 hostname SW1
@@ -201,11 +202,11 @@ exit
 end
 wr
 
-
+```
 
 
 # SW2
-
+```
 
 enable
 configure terminal
@@ -271,12 +272,12 @@ end
 wr
 
 
-
+```
 
 
 # R1 
 
-
+```
 configure terminal
 hostname R1
 interface g0/0
@@ -329,7 +330,7 @@ exit
 end
 wr
 
-
+```
 ################### REMOTE SITE #########################
 
 
@@ -337,6 +338,7 @@ wr
 # Clients & Servers
 
 # Server
+```
 ip 50.1.1.20/24 50.1.1.1
 
 # Server1
@@ -344,9 +346,9 @@ ip 50.1.1.21/24 50.1.1.1
 
 # Tiny-Client
 ip 50.1.1.10/24 50.1.1.1
-
+```
 # R2 
-
+```
 configure terminal 
 hostname R2
 interface g0/4
@@ -404,10 +406,10 @@ exit
 end
 wr
 
-
+```
 
 # SW3 
-
+```
 enable
 configure terminal
 vtp domain ccnp
@@ -455,10 +457,10 @@ end
 wr
 
 
-
+```
 
 # SW4 
-
+```
 enable
 configure terminal
 hostname SW4
@@ -515,11 +517,11 @@ end
 wr
 
 
-
+```
 
 
 # SW5 
-
+```
 enable
 configure terminal
 hostname SW5
@@ -575,9 +577,9 @@ exit
 end
 wr
 
-
+```
 # SW6 
-
+```
 enable
 configure terminal
 hostname SW6
@@ -621,9 +623,9 @@ end
 wr
 
 
-
+```
 # Access-Switch5
-
+```
 enable
 configure terminal
 hostname Access-Switch5
@@ -647,10 +649,10 @@ exit
 end
 wr
 
-
+```
 
 # Access-Switch6
-
+```
 enable
 configure terminal
 hostname Access-Switch6
@@ -673,3 +675,4 @@ passive-interface vlan 50
 exit
 end
 wr
+```
