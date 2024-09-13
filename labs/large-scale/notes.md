@@ -11,4 +11,4 @@ Server specs:
 
 # Lab layout 
 
-![image](pngs/large_stage_1.png "a title")
+![image](src/images/large-scale-01.png "Lab Topology Diagram")
