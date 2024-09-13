@@ -11,4 +11,4 @@ Server specs:
 
 # Lab layout 
 
-![Alt text](/pngs/large_stage_1.png "a title")
+![image](pngs/large_stage_1.png "a title")
