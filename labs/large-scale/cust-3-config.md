@@ -15,6 +15,7 @@ iface eth0 inet dhcp
 
 
 # Internet Router
+
 ```
 
 configure terminal
@@ -44,6 +45,7 @@ wr
 ```
 
 # Access-Switch1
+
 ```
 enable
 configure terminal
@@ -66,6 +68,7 @@ wr
 ```
 
 # Access-Switch2
+
 ```
 enable
 configure terminal
@@ -85,7 +88,9 @@ wr
 
 
 ```
+
 # Access-Switch3
+
 ```
 enable
 configure terminal
@@ -104,7 +109,9 @@ end
 wr
 
 ```
+
 # Access-Switch4
+
 ```
 enable
 configure terminal
@@ -121,9 +128,12 @@ no shutdown
 exit
 end
 wr
+
+
 ```
 
 # SW1
+
 ```
 enable
 configure terminal
@@ -204,8 +214,8 @@ wr
 
 ```
 
-
 # SW2
+
 ```
 
 enable
@@ -274,7 +284,6 @@ wr
 
 ```
 
-
 # R1 
 
 ```
@@ -331,6 +340,7 @@ end
 wr
 
 ```
+
 ################### REMOTE SITE #########################
 
 
@@ -338,6 +348,7 @@ wr
 # Clients & Servers
 
 # Server
+
 ```
 ip 50.1.1.20/24 50.1.1.1
 
@@ -346,8 +357,11 @@ ip 50.1.1.21/24 50.1.1.1
 
 # Tiny-Client
 ip 50.1.1.10/24 50.1.1.1
+
 ```
+
 # R2 
+
 ```
 configure terminal 
 hostname R2
@@ -409,6 +423,7 @@ wr
 ```
 
 # SW3 
+
 ```
 enable
 configure terminal
@@ -460,6 +475,7 @@ wr
 ```
 
 # SW4 
+
 ```
 enable
 configure terminal
@@ -519,8 +535,8 @@ wr
 
 ```
 
-
 # SW5 
+
 ```
 enable
 configure terminal
@@ -578,7 +594,9 @@ end
 wr
 
 ```
+
 # SW6 
+
 ```
 enable
 configure terminal
@@ -624,7 +642,9 @@ wr
 
 
 ```
+
 # Access-Switch5
+
 ```
 enable
 configure terminal
@@ -652,6 +672,7 @@ wr
 ```
 
 # Access-Switch6
+
 ```
 enable
 configure terminal
