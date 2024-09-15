@@ -1,6 +1,6 @@
 # Large enterprise topology with 2 remote sites connected via tunnel
-- site one users
-- site two servers admin
+- site one users admin
+- site two servers
 
 
 ######### MAIN SITE ########
@@ -14,317 +14,50 @@ iface eth0 inet dhcp
 	hostname C1-8
 
 
-# Internet Router
+# R2
 
 ```
-
+enable
 configure terminal
-hostname Internet
+hostname R2
 ip domain-lookup
 ip name-server 8.8.8.8
+ip route 0.0.0.0 0.0.0.0 172.16.12.1
+access-list 1 permit any
+ip nat inside source list 1 interface g1 overload
 
 
 interface loopback 0
-ip address 1.1.3.1 255.2552.255.255
+ip address 1.1.3.1 255.255.255.255
 
-interface g0/0
+interface g1
 no shutdown
-ip address 1.1.1.2 255.255.255.0
+description "Uplink to ISP"
+ip address 172.16.12.2 255.255.255.0
+ip nat outside
 exit
 
-interface g0/1
+interface g2
 no shutdown
-ip address 2.2.2.2 255.255.255.0
-exit
-end
-wr
+ip nat inside
+description "Link To DSW1"
+ip address 10.111.110.1 255.255.255.0
 
-
-
-
-```
-
-# Access-Switch1
-
-```
-enable
-configure terminal
-hostname Access-Switch1
-interface range g0/2-3
-switchport access vlan 10
-no shut
-exit
-
-interface range g0/0-1
-switchport trunk encapsulation dot1q
-switchport mode trunk
-no shut
-exit
-
-vtp domain ccnp
-end
-wr
-
-```
-
-# Access-Switch2
-
-```
-enable
-configure terminal
-hostname Access-Switch2
-interface range g0/2-3
-switchport access vlan 20
+interface g3
+ip nat inside
 no shutdown
-exit
+description "Link To DSW2"
+ip address 10.112.110.1 255.255.255.0
 
-interface range g0/0-1
-switchport trunk encapsulation dot1q
-switchport mode trunk
-no shutdown
-exit
-end
-wr
-
-
-```
-
-# Access-Switch3
-
-```
-enable
-configure terminal
-hostname Access-Switch3
-interface range g0/2-3
-switchport access vlan 30
-no shutdown
-exit
-
-interface range g0/0-1
-switchport trunk encapsulation dot1q
-switchport mode trunk
-no shutdown
-exit
-end
-wr
-
-```
-
-# Access-Switch4
-
-```
-enable
-configure terminal
-hostname Access-Switch4
-interface range g0/2-3
-switchport access vlan 40
-no shutdown
-exit
-
-interface range g0/0-1
-switchport trunk encapsulation dot1q
-switchport mode trunk
-no shutdown
-exit
-end
-wr
-
-
-```
-
-# SW1
-
-```
-enable
-configure terminal
-hostname SW1
-
-int range g2/0-3
-shutdown
-no switchport
-channel-group 10 mode on
-no shutdown
-exit
-
-
-interface port-channel 10
-ip address 11.1.1.1 255.255.255.0
-no shutdown
-exit
-
-interface range g0/1-3, g1/0
-switchport trunk encapsulation dot1q
-switchport mode trunk
-exit
-
-vlan 10
-exit
-vlan 20
-exit
-vlan 30
-exit
-vlan 40
-exit
-
-
-interface vlan 10
-no shutdown
-ip add 10.1.1.254 255.255.255.0
-standby 10 ip 10.1.1.1
-exit
-
-interface vlan 20
-no shutdown
-ip add 20.1.1.254 255.255.255.0
-standby 10 ip 20.1.1.1
-exit
-
-interface vlan 30
-no shutdown
-ip add 30.1.1.254 255.255.255.0
-standby 10 ip 30.1.1.1
-exit
-
-interface vlan 40
-no shutdown
-ip add 40.1.1.254 255.255.255.0
-standby 10 ip 40.1.1.1
-exit
-
-interface g0/0
-no switchport
-ip address 12.1.1.1 255.255.255.0
-no shutdown
-exit
 
 router ospf 1
-network 12.1.1.0 0.0.0.255 area 0
-network 10.1.1.0 0.0.0.255 area 0
-network 20.1.1.0 0.0.0.255 area 0
-network 30.1.1.0 0.0.0.255 area 0
-network 40.1.1.0 0.0.0.255 area 0
-passive-interface vlan 10
-passive-interface vlan 20
-passive-interface vlan 30
-passive-interface vlan 40
-exit
-
-end
-wr
-
-```
-
-# SW2
-
-```
-
-enable
-configure terminal
-hostname SW2
-
-interface g0/0
-no switchport
-ip address 13.1.1.1 255.255.255.0
-no shutdown
-
-interface range g2/0-3
-shutdown
-no switchport
-channel-group 10 mode on
-no shutdown
-
-interface port-channel 10
-ip address 11.1.1.2 255.255.255.0
-no shut
-
-interface range g0/1-3, g1/0
-switchport trunk encapsulation dot1q
-switchport mode trunk
-exit
-
-
-
-interface vlan 10
-no shutdown
-ip add 10.1.1.253 255.255.255.0
-standby 10 ip 10.1.1.1
-exit
-
-interface vlan 20
-no shutdown
-ip add 20.1.1.253 255.255.255.0
-standby 10 ip 20.1.1.1
-exit
-
-interface vlan 30
-no shutdown
-ip add 30.1.1.253 255.255.255.0
-standby 10 ip 30.1.1.1
-exit
-
-interface vlan 40
-no shutdown
-ip add 40.1.1.253 255.255.255.0
-standby 10 ip 40.1.1.1
-exit
-
-router ospf 1
-network 13.1.1.0 0.0.0.255 area 0
-network 10.1.1.0 0.0.0.255 area 0
-network 20.1.1.0 0.0.0.255 area 0
-network 30.1.1.0 0.0.0.255 area 0
-network 40.1.1.0 0.0.0.255 area 0
-passive-interface vlan 10
-passive-interface vlan 20
-passive-interface vlan 30
-passive-interface vlan 40
-end
-wr
-
-
-```
-
-# R1 
-
-```
-configure terminal
-hostname R1
-interface g0/0
-ip address 12.1.1.2 255.255.255.0
-no shutdown
-
-interface g0/1
-ip address 13.1.1.2 255.255.255.0
-no shutdown
-
-interface g0/2
-ip address 1.1.1.1 255.255.255.252
-no shutdown
-
-router ospf 1
-network 12.1.1.0 0.0.0.255 area 0
-network 13.1.1.0 0.0.0.255 area 0
+network 1.1.3.1 0.0.0.0 area 0
+network 10.111.110.0 0.0.0.255 area 0
+network 10.112.110.0 0.0.0.255 area 0
 default-information originate
 
 
-ip route 0.0.0.0 0.0.0.0 g0/2 1.1.1.2
-
-
-ip access-list standard 10
-permit any
-ip nat inside source list 10 int g0/2 overload
-
-interface g0/0
-ip nat inside
-exit
-
-interface g0/1
-ip nat inside
-exit
-
-interface g0/2
-ip nat outside
-exit
+end
 
 interface tunnel 1
 ip address 192.168.10.1 255.255.255.0
@@ -336,10 +69,279 @@ router eigrp 10
 network 192.168.10.0
 exit
 
+
+
+
+```
+
+
+
+# DSW1
+
+```
+enable
+configure terminal
+hostname DSW1
+ip domain-lookup
+ip name-server 8.8.8.8
+ip routing
+
+
+int range g1/0-3
+no switchport
+channel-group 10 mode active
+no shutdown
+
+interface port-channel 10
+description "PO 10 to DSW2"
+ip address 10.113.110.1 255.255.255.0
+no shutdown
+
+interface range g1/0-3
+switchport
+switchport trunk encapsulation dot1q
+switchport mode trunk
+
+vlan 100
+vlan 200
+vlan 300
+vlan 400
+
+interface vlan 100
+description "STAFF"
+ip address 10.110.10.254 255.255.255.0
+standby 10 ip 10.110.10.1
+no shutdown
+
+interface vlan 200
+description "HR"
+ip address 10.110.20.254 255.255.255.0
+standby 10 ip 10.110.20.1
+no shutdown
+
+interface vlan 300
+description "GUESTS"
+ip address 10.110.30.254 255.255.255.0
+standby 10 ip 10.110.30.1
+no shutdown
+
+interface vlan 400
+description "IT"
+ip address 10.110.100.254 255.255.255.0
+standby 10 ip 10.110.100.1
+no shutdown
+
+interface g0/0
+description "Uplink to R2"
+no switchport
+ip address 10.111.110.2 255.255.255.0
+no shutdown
+
+interface loop 0
+ip address 1.1.3.2 255.255.255.255
+
+router ospf 1
+network 1.1.3.2 0.0.0.0 area 0
+network 10.111.110.0 0.0.0.0 area 0
+network 10.110.10.0 0.0.0.255 area 0
+network 10.110.20.0 0.0.0.255 area 0
+network 10.110.30.0 0.0.0.255 area 0
+network 10.110.100.0 0.0.0.255 area 0
+passive-interface vlan 100
+passive-interface vlan 200
+passive-interface vlan 300
+passive-interface vlan 400
+default-information originate
+exit
+
+end
+
+
+```
+
+# DSW2
+
+```
+
+enable
+configure terminal
+hostname DSW2
+ip domain-lookup
+ip name-server 8.8.8.8
+ip routing
+
+
+
+interface port-channel 10
+description "PO 10 to DSW1"
+ip address 10.110.110.10 255.255.255.252
+no shutdown
+
+interface range g1/0-3
+no switchport
+channel-group 10 mode active
+no shutdown
+
+interface range g1/0-3
+switchport
+switchport trunk encapsulation dot1q
+switchport mode trunk
+no shutdown
+
+vlan 100
+vlan 200
+vlan 300
+vlan 400
+
+interface vlan 100
+description "STAFF"
+ip address 10.110.10.253 255.255.255.0
+standby 10 ip 10.110.10.1
+no shutdown
+
+interface vlan 200
+description "HR"
+ip address 10.110.20.253 255.255.255.0
+standby 10 ip 10.110.20.1
+no shutdown
+
+interface vlan 300
+description "GUESTS"
+ip address 10.110.30.253 255.255.255.0
+standby 10 ip 10.110.30.1
+no shutdown
+
+interface vlan 400
+description "IT"
+ip address 10.110.100.253 255.255.255.0
+standby 10 ip 10.110.100.1
+no shutdown
+
+interface g0/0
+description "Uplink to R2"
+no switchport
+ip address 10.110.110.2 255.255.255.252
+no shutdown
+
+interface loop 0
+ip address 1.1.3.3 255.255.255.255
+
+router ospf 1
+default-information originate
+network 1.1.3.3 0.0.0.0 area 0
+network 10.110.10.0 0.0.0.255 area 0
+network 10.110.20.0 0.0.0.255 area 0
+network 10.110.30.0 0.0.0.255 area 0
+network 10.110.100.0 0.0.0.255 area 0
+passive-interface vlan 100
+passive-interface vlan 200
+passive-interface vlan 300
+passive-interface vlan 400
+exit
+
+
+```
+
+
+# ASW1
+
+```
+enable
+configure terminal
+hostname Access-Switch1
+ip domain-lookup
+ip name-server 8.8.8.8
+
+interface loop 0
+ip address 1.1.3.4 255.255.255.255
+
+interface range g0/2-3
+switchport access vlan 100
+no shut
+exit
+
+interface range g0/0-1
+switchport trunk encapsulation dot1q
+switchport mode trunk
+no shut
+exit
+
+router ospf 1
+network 1.1.3.4 0.0.0.255 area 0
+
+vtp domain ccnp
+end
+
+
+```
+
+# ASW2
+
+```
+enable
+configure terminal
+hostname Access-Switch2
+interface range g0/2-3
+switchport access vlan 200
+no shutdown
+exit
+
+interface range g0/0-1
+switchport trunk encapsulation dot1q
+switchport mode trunk
+no shutdown
+exit
+end
+wr
+
+
+```
+
+# ASW3
+
+```
+enable
+configure terminal
+hostname Access-Switch3
+interface range g0/2-3
+switchport access vlan 300
+no shutdown
+exit
+
+interface range g0/0-1
+switchport trunk encapsulation dot1q
+switchport mode trunk
+no shutdown
+exit
 end
 wr
 
 ```
+
+# ASW4
+
+```
+enable
+configure terminal
+hostname Access-Switch4
+interface range g0/2-3
+switchport access vlan 400
+no shutdown
+exit
+
+interface range g0/0-1
+switchport trunk encapsulation dot1q
+switchport mode trunk
+no shutdown
+exit
+end
+wr
+
+
+```
+
+
+
 
 ################### REMOTE SITE #########################
 

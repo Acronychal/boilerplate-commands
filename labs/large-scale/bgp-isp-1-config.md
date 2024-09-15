@@ -316,6 +316,16 @@ set protocols bgp 65000 address-family ipv4-unicast network 1.1.1.8/32
 set protocols bgp 65000 address-family ipv4-unicast network 172.16.9.0/24
 set protocols bgp 65000 parameters router-id 1.1.1.8
 
+configure
+set protocols ospf area 0 network 172.16.9.0/24
+set protocols ospf area 0 network 172.16.12.0/24
+set protocols ospf parameters router-id 1.1.1.8
+set protocols ospf redistribute bgp
+
+
+
+
+
 commit
 save
 exit
