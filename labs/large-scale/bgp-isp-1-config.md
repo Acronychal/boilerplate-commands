@@ -88,6 +88,7 @@ configure terminal
 hostname BGP-R3
 ip domain-lookup
 ip name-server 8.8.8.8
+ip route 0.0.0.0 0.0.0.0 172.16.2.1
 
 interface g0/0
 no shut

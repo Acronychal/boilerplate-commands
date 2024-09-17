@@ -8,12 +8,14 @@
 
 # Ubuntu Docker nodes
 
-# DHCP config for eth0
+  - Edit and uncomment the following for DHCP using nano/vim /etc/network/interface
+
+```
 auto eth0
 iface eth0 inet dhcp
 	hostname C1-8
 
-
+```
 # R2
 
 ```
@@ -87,14 +89,15 @@ ip name-server 8.8.8.8
 ip routing
 
 
-int range g1/0-3
-no switchport
-channel-group 10 mode active
-no shutdown
-
 interface port-channel 10
 description "PO 10 to DSW2"
+no switchport
 ip address 10.113.110.1 255.255.255.0
+no shutdown
+
+interface range g0/1-3
+no switchport
+channel-group 10 mode active
 no shutdown
 
 interface range g1/0-3
@@ -154,6 +157,17 @@ passive-interface vlan 400
 default-information originate
 exit
 
+
+
+
+spanning-tree mode rapid-pvst
+spanning-tree loopguard default
+
+
+
+
+
+
 end
 
 
@@ -174,10 +188,11 @@ ip routing
 
 interface port-channel 10
 description "PO 10 to DSW1"
-ip address 10.110.110.10 255.255.255.252
+no switchport
+ip address 10.113.110.2 255.255.255.0
 no shutdown
 
-interface range g1/0-3
+interface range g0/1-3
 no switchport
 channel-group 10 mode active
 no shutdown
@@ -220,7 +235,7 @@ no shutdown
 interface g0/0
 description "Uplink to R2"
 no switchport
-ip address 10.110.110.2 255.255.255.252
+ip address 10.112.110.2 255.255.255.0
 no shutdown
 
 interface loop 0
@@ -238,6 +253,7 @@ passive-interface vlan 200
 passive-interface vlan 300
 passive-interface vlan 400
 exit
+
 
 
 ```
@@ -263,13 +279,19 @@ exit
 interface range g0/0-1
 switchport trunk encapsulation dot1q
 switchport mode trunk
-no shut
+no shutdown
 exit
 
 router ospf 1
 network 1.1.3.4 0.0.0.255 area 0
 
 vtp domain ccnp
+
+spanning-tree mode rapid-pvst
+spanning-tree loopguard default
+
+
+
 end
 
 
@@ -292,7 +314,7 @@ switchport mode trunk
 no shutdown
 exit
 end
-wr
+
 
 
 ```
