@@ -160,13 +160,6 @@ exit
 
 
 
-spanning-tree mode rapid-pvst
-spanning-tree loopguard default
-
-
-
-
-
 
 end
 
@@ -286,10 +279,6 @@ router ospf 1
 network 1.1.3.4 0.0.0.255 area 0
 
 vtp domain ccnp
-
-spanning-tree mode rapid-pvst
-spanning-tree loopguard default
-
 
 
 end
