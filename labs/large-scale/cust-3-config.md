@@ -550,7 +550,12 @@ description "Link to R3"
 no switchport
 ip address 10.1.1.2 255.255.255.0
 no shutdown
-exit
+
+interface g0/2
+description "Link to R4"
+no switchport
+ip address 10.2.1.1 255.255.255.0
+
 
 vlan 500
 exit
@@ -568,18 +573,6 @@ switchport mode trunk
 no shutdown
 exit
 
-interface port-channel 10
-no switchport
-ip address 14.1.10.1 255.255.255.0
-no shutdown
-exit
-
-interface range g1/0-1
-shutdown
-no switchport
-channel-group 10 mode on 
-no shutdown
-exit
 
 router ospf 1
 network 14.1.0.0 0.0.255.255 area 0
