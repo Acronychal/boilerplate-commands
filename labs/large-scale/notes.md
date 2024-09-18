@@ -16,4 +16,4 @@ Server specs:
 
 # Lab layout 
 
-![image](src/images/large-scale-02.png "Lab Topology Diagram")
+![image](src/images/large-scale-01.png "Lab Topology Diagram")
