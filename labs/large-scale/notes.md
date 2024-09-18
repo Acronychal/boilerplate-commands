@@ -7,6 +7,20 @@ Server specs:
   - 2 22c/44t CPU
   - 256 gb of RAM
 
+# Node Count 48
+  - IOSv
+  - IOSvL2
+  - NxOS
+  - CSR
+  - Cisco DCMN
+  - ASAv(ASDM)
+  - VyOS
+  - OS10
+  - Windows 11 Client
+  - Windwos 2022 Server
+  - Ubuntu Contontainer
+  
+
 # Lab objective
   - Simulate an ISP network using bgp/ospf
   - Simulate multiple customer network infrastructure. 
