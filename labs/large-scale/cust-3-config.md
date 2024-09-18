@@ -276,7 +276,7 @@ no shutdown
 exit
 
 router ospf 1
-network 1.1.3.4 0.0.0.255 area 0
+network 1.1.3.4 0.0.0.0 area 0
 
 vtp domain ccnp
 
@@ -297,14 +297,17 @@ switchport access vlan 200
 no shutdown
 exit
 
+interface loop 0
+ip address 1.1.3.5 255.255.255.255
+
 interface range g0/0-1
 switchport trunk encapsulation dot1q
 switchport mode trunk
 no shutdown
 exit
-end
 
-
+router ospf 1
+network 1.1.3.5 0.0.0.0
 
 ```
 
@@ -319,13 +322,26 @@ switchport access vlan 300
 no shutdown
 exit
 
+interface loop 0
+ip address 1.1.3.6 255.255.255.255
+
 interface range g0/0-1
 switchport trunk encapsulation dot1q
 switchport mode trunk
 no shutdown
 exit
-end
-wr
+
+router ospf 1
+network 1.1.3.5 0.0.0.0 area 0
+
+
+
+
+
+
+
+
+
 
 ```
 
@@ -340,13 +356,17 @@ switchport access vlan 400
 no shutdown
 exit
 
+interface loop 0
+ip address 1.1.3.7 255.255.255.0
+
 interface range g0/0-1
 switchport trunk encapsulation dot1q
 switchport mode trunk
 no shutdown
 exit
-end
-wr
+
+router ospf 1
+network 1.1.3.7 0.0.0.0 area 0
 
 
 ```
@@ -358,59 +378,71 @@ wr
 
 
 
-# Clients & Servers
+# Remote Datacenter 2 servers
 
-# Server
-
-```
-ip 50.1.1.20/24 50.1.1.1
-
-# Server1
-ip 50.1.1.21/24 50.1.1.1
-
-# Tiny-Client
-ip 50.1.1.10/24 50.1.1.1
+# Server windows 2022 fresh install
 
 ```
 
-# R2 
+
+# Server01
+ip 10.100.100.10
+ip 10.100.100.11
+
+# Server02
+ip 10.100.100.20
+ip 10.100.100.21
+
 
 ```
+
+# R3 
+
+```
+enable
 configure terminal 
-hostname R2
-interface g0/4
-ip address 2.2.2.1 255.255.255.0
-no shutdown
-exit
+hostname R3
+ip name-server 8.8.8.8
 
-interface g0/0
-ip address 14.1.1.1 255.255.255.0
-no shutdown
-exit
+interface loop 0
+ip address 1.1.4.1 255.255.255.0
 
-interface g0/1
-ip address 14.1.2.1 255.255.255.0
-no shutdown
-exit
 
-interface g0/2
-ip address 14.1.3.1 255.255.255.0
+interface g1
+description "Link to ISP"
+ip nat outside
+ip address 172.16.13.2 255.255.255.0
 no shutdown
-exit
 
-interface g0/3
-ip address 14.1.4.1 255.255.255.0
+interface g2
+description "Link to DCSW1"
+ip address 10.1.1.1 255.255.255.0
 no shutdown
-exit
+
+interface g3
+description "Link to DCSW2"
+ip address 10.1.2.1 255.255.255.0
+no shutdown
+
+interface g4
+description "Link to DCSW3"
+ip address 10.1.3.1 255.255.255.0
+no shutdown
+
+interface g5
+description "Link to DCSW4"
+ip address 10.1.4.1 255.255.255.0
+no shutdown
 
 router ospf 1
-network 14.1.0.0 0.0.255.255 area 0
+network 1.1.4.1 0.0.0.0 area 0
+network 10.0.0.0 0.255.255.255 area 0
 default-information originate
 
 interface tunnel 1
 ip address 192.168.10.2 255.255.255.0
-tunnel source 2.2.2.1
-tunnel destination 1.1.1.1
+tunnel source 172.16.13.2
+tunnel destination 172.16.12.2
 exit
 
 router eigrp 10
@@ -419,41 +451,114 @@ network 192.168.10.0
 exit
 
 access-list 10 permit any
-ip nat inside source list 10 interface g0/4 overload
+ip nat inside source list 10 interface g1 overload
 
-ip route 0.0.0.0 0.0.0.0 g0/4 2.2.2.2
+ip route 0.0.0.0 0.0.0.0 g1 172.16.13.1
 
-interface range g0/0-3
+interface range g2-5
+description "links to DCSW1-4"
 ip nat inside
 exit
 
-interface g0/4
-ip nat outside
+interface g1
+
 exit
 end
-wr
+
 
 ```
 
-# SW3 
+# R4 
+
+```
+enable
+configure terminal 
+hostname R4
+ip name-server 8.8.8.8
+
+interface loop 0
+ip address 1.1.4.1 255.255.255.255
+
+interface g1
+description "Link to ISP"
+ip nat outside
+ip address 172.16.14.2 255.255.255.0
+no shutdown
+
+interface g2
+description "Link to DCSW1"
+ip address 10.2.1.1 255.255.255.0
+no shutdown
+
+interface g3
+description "Link to DCSW2"
+ip address 10.2.2.1 255.255.255.0
+no shutdown
+
+interface g4
+description "Link to DCSW3"
+ip address 10.2.3.1 255.255.255.0
+no shutdown
+
+interface g5
+description "Link to DCSW4"
+ip address 10.2.4.1 255.255.255.0
+no shutdown
+
+router ospf 1
+network 10.1.4.2 0.0.0.0 area 0
+network 10.0.0.0 0.255.255.255 area 0
+default-information originate
+
+interface tunnel 1
+ip address 192.168.20.2 255.255.255.0
+tunnel source 172.16.13.2
+tunnel destination 172.16.12.2
+exit
+
+router eigrp 20
+no auto-summary
+network 192.168.20.0
+exit
+
+access-list 10 permit any
+ip nat inside source list 10 interface g1 overload
+
+ip route 0.0.0.0 0.0.0.0 g1 172.16.14.1
+
+interface range g2-5
+description "links to DCSW1-4"
+ip nat inside
+exit
+
+
+end
+
+
+```
+
+# DCSW1 
 
 ```
 enable
 configure terminal
 vtp domain ccnp
-hostname SW3
-interface g0/0 
+hostname DCSW1
+
+interface g0/0
+description "Link to R3"
 no switchport
-ip address 14.1.1.2 255.255.255.0
+ip address 10.1.1.2 255.255.255.0
 no shutdown
 exit
 
-vlan 50
+vlan 500
 exit
 
-interface vlan 50
-ip address 50.1.1.251 255.255.255.0
-standby 10 ip 50.1.1.1
+interface vlan 500
+description "Servers"
+ip address 10.100.100.251 255.255.255.0
+standby 10 ip 10.100.100.1
 no shutdown
 exit
 
@@ -487,49 +592,25 @@ wr
 
 ```
 
-# SW4 
+# DCSW2 
 
 ```
 enable
 configure terminal
-hostname SW4
+hostname DCSW2
+
 interface g0/0 
 no switchport
-ip address 14.1.2.2 255.255.255.0
+ip address 10.1.1.2 255.255.255.0
 no shutdown
 exit
 
-interface range g0/1-2
-switchport trunk encapsulation dot1q
-switchport mode trunk
-no shutdown
-exit
-
-interface port-channel 10
+interface g0/1
 no switchport
-ip address 14.1.10.2 255.255.255.0
+ip address 10.2.1.2 255.255.255.0
 no shutdown
-exit
 
-interface range g1/0-1
-shutdown
-no switchport
-channel-group 10 mode on 
-no shutdown
-exit
 
-interface port-channel 20
-no switchport
-ip address 14.1.20.1 255.255.255.0
-no shutdown
-exit
-
-interface range g1/2-3
-shutdown
-no switchport
-channel-group 20 mode on 
-no shutdown
-exit
 
 interface vlan 50
 ip address 50.1.1.252 255.255.255.0

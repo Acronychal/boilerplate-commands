@@ -350,6 +350,16 @@ no shutdown
 no switchport
 ip address 172.16.8.2/24
 
+interface ethernet 1/1/2
+no shutdown
+no switchport
+ip address 172.16.13.1/24
+
+interface ethernet 1/1/3
+no shutdown
+no switchport
+ip address 172.16.14.1/24
+
 
 router bgp 65000
 router-id 1.1.1.9
