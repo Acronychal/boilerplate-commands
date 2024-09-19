@@ -403,10 +403,20 @@ enable
 configure terminal 
 hostname R3
 ip name-server 8.8.8.8
+ip routing
+ip multicast-routing distributed
 
 interface loop 0
-ip address 1.1.4.1 255.255.255.0
+ip address 1.1.4.1 255.255.255.255
+ip ospf 1 area 0
 
+interface loop 1
+ip address 1.1.41.1 255.255.255.255
+ip ospf 1 area 0
+
+interface loop 2
+ip address 1.1.41.2 255.255.255.255
+ip ospf 1 area 0
 
 interface g1
 description "Link to ISP"
@@ -417,27 +427,75 @@ no shutdown
 interface g2
 description "Link to DCSW1"
 ip address 10.1.1.1 255.255.255.0
+ip pim sparse-mode
+ip ospf network point-to-point
+ip ospf 1 area 0
 no shutdown
 
 interface g3
 description "Link to DCSW2"
 ip address 10.1.2.1 255.255.255.0
+ip pim sparse-mode
+ip ospf network point-to-point
+ip ospf 1 area 0
 no shutdown
 
 interface g4
 description "Link to DCSW3"
 ip address 10.1.3.1 255.255.255.0
+ip pim sparse-mode
+ip ospf network point-to-point
+ip ospf 1 area 0
 no shutdown
 
 interface g5
 description "Link to DCSW4"
 ip address 10.1.4.1 255.255.255.0
+ip pim sparse-mode
+ip ospf network point-to-point
+ip ospf 1 area 0
 no shutdown
 
 router ospf 1
-network 1.1.4.1 0.0.0.0 area 0
-network 10.0.0.0 0.255.255.255 area 0
-default-information originate
+router-id 1.1.4.1
+
+router bgp 65001
+template peer-policy RR-PP
+route-reflector-client
+send-community both
+exit-peer-policy
+
+template peer-session RR-PS
+remote-as 65001
+update-source Loopback0
+exit-peer-session
+
+bgp router-id 1.1.4.1
+bgp log-neighbor-changes
+no bgp default ipv4-unicast
+neighbor 1.1.4.2 remote-as 65001
+neighbor 1.1.4.2 update-source Loopback0
+neighbor 1.1.4.3 inherit peer-session RR-PS
+neighbor 1.1.4.4 inherit peer-session RR-PS
+
+address-family ipv4
+exit-address-family
+
+address-family l2vpn evpn
+neighbor 1.1.4.2 activate
+neighbor 1.1.4.2 send-community both
+neighbor 1.1.4.3 activate
+neighbor 1.1.4.3 send-community extended
+neighbor 1.1.4.3 inherit peer-policy RR-PP
+neighbor 1.1.4.4 activate
+neighbor 1.1.4.4 send-community extended
+neighbor 1.1.4.4 inherit peer-policy RR-PP
+exit-address-family
+
+ip pim rp-addres 1.1.41.2
+ip msdp peer 1.1.42.2 connect-source
+loopback1 remote-as 65001
+ip msdp cache-sa-state
 
 interface tunnel 1
 ip address 192.168.10.2 255.255.255.0
@@ -460,10 +518,7 @@ description "links to DCSW1-4"
 ip nat inside
 exit
 
-interface g1
 
-exit
-end
 
 
 ```
@@ -475,9 +530,25 @@ enable
 configure terminal 
 hostname R4
 ip name-server 8.8.8.8
+ip routing
+ip multicast-routing distributed
+
 
 interface loop 0
 ip address 1.1.4.1 255.255.255.255
+ip ospf 1 area 0
+
+interface loop 1
+ip address 1.1.42.1 255.255.255.255
+ip ospf 1 area 0
+
+interface loop 2
+ip address 1.1.42.2 255.255.255.255
+ip ospf 1 area 0
+
+ip pim sparse-mode
+ip ospf 1 area 0
+
 
 interface g1
 description "Link to ISP"
@@ -488,27 +559,76 @@ no shutdown
 interface g2
 description "Link to DCSW1"
 ip address 10.2.1.1 255.255.255.0
+ip pim sparse-mode
+ip ospf network point-to-point
+ip ospf 1 area 0
 no shutdown
 
 interface g3
 description "Link to DCSW2"
 ip address 10.2.2.1 255.255.255.0
+ip pim sparse-mode
+ip ospf network point-to-point
+ip ospf 1 area 0
 no shutdown
 
 interface g4
 description "Link to DCSW3"
 ip address 10.2.3.1 255.255.255.0
+ip pim sparse-mode
+ip ospf network point-to-point
+ip ospf 1 area 0
 no shutdown
 
 interface g5
 description "Link to DCSW4"
 ip address 10.2.4.1 255.255.255.0
+ip pim sparse-mode
+ip ospf network point-to-point
+ip ospf 1 area 0
 no shutdown
 
 router ospf 1
-network 10.1.4.2 0.0.0.0 area 0
-network 10.0.0.0 0.255.255.255 area 0
-default-information originate
+router-id 1.1.4.2
+
+router bgp 65001
+template peer-policy RR-PP
+route-reflector-client
+send-community both
+exit-peer-policy
+
+template peer-session RR-PS
+remote-as 65001
+update-source Loopback0
+exit-peer-session
+
+bgp router-id 1.1.4.2
+bgp log-neighbor-changes
+no gp default ipv4-unicast
+neighbor 1.1.4.1 remote-as 65001
+neighbor 1.1.4.1 update-source loopback0
+neighbor 1.1.4.2 inherit peer-session RR-PS
+neighbor 1.1.4.3 inherit peer-session RR-PS
+
+address-family ipv4
+exit-address-family
+
+address-family l2vpn evpn
+neighbor 1.1.4.1 activate
+neighbor 1.1.4.1 send-community both
+neighbor 1.1.4.3 activate
+neighbor 1.1.4.3 send-community extended
+neighbor 1.1.4.3 inherit peer-policy RR-PP
+neighbor 1.1.4.4 activate
+neighbor 1.1.4.4 send-community extended
+neighbor 1.1.4.4 inherit peer-policy RR-PP
+exit-address-family
+
+ip pim rp-address 1.1.42.1
+ip msdp peer 172.16.254.1 connect-source loopback1
+remote-as 65001
+ip msdp cache-sa-state
+
 
 interface tunnel 1
 ip address 192.168.20.2 255.255.255.0
@@ -527,7 +647,6 @@ ip nat inside source list 10 interface g1 overload
 ip route 0.0.0.0 0.0.0.0 g1 172.16.14.1
 
 interface range g2-5
-description "links to DCSW1-4"
 ip nat inside
 exit
 
@@ -563,7 +682,6 @@ exit
 interface vlan 500
 description "Servers"
 ip address 10.100.100.251 255.255.255.0
-standby 10 ip 10.100.100.1
 no shutdown
 exit
 
