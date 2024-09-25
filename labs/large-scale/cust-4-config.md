@@ -19,14 +19,14 @@ ip address 172.16.255.255 255.255.255.255
 ip pim sparse-mode
 ip ospf 1 area 0
 !
-interface GigabitEthernet1/0/1
+interface GigabitEthernet1
 no switchport
 ip address 172.16.13.1 255.255.255.0
 ip pim sparse-mode
 ip ospf network point-to-point
 ip ospf 1 area 0
 !
-interface GigabitEthernet1/0/2
+interface GigabitEthernet2
 no switchport
 ip address 172.16.14.1 255.255.255.0
 ip pim sparse-mode
@@ -97,14 +97,14 @@ ip address 172.16.255.255 255.255.255.255
 ip pim sparse-mode
 ip ospf 1 area 0
 !
-interface GigabitEthernet1/0/1
+interface GigabitEthernet1
 no switchport
 ip address 172.16.23.2 255.255.255.0
 ip pim sparse-mode
 ip ospf network point-to-point
 ip ospf 1 area 0
 !
-interface GigabitEthernet1/0/2
+interface GigabitEthernet2
 no switchport
 ip address 172.16.24.2 255.255.255.0
 ip pim sparse-mode
@@ -208,21 +208,21 @@ ip address 172.16.254.3 255.255.255.255
 ip pim sparse-mode
 ip ospf 1 area 0
 !
-interface GigabitEthernet1/0/1
+interface GigabitEthernet1
 no switchport
 ip address 172.16.13.3 255.255.255.0
 ip pim sparse-mode
 ip ospf network point-to-point
 ip ospf 1 area 0
-!
-interface GigabitEthernet1/0/2
+
+interface GigabitEthernet2
 no switchport
 ip address 172.16.23.3 255.255.255.0
 ip pim sparse-mode
 ip ospf network point-to-point
 ip ospf 1 area 0
 !
-interface GigabitEthernet1/0/10
+interface GigabitEthernet3
 switchport mode trunk
 !
 interface Vlan101
@@ -337,21 +337,21 @@ ip address 172.16.254.4 255.255.255.255
 ip pim sparse-mode
 ip ospf 1 area 0
 !
-interface GigabitEthernet1/0/1
+interface GigabitEthernet1
 no switchport
 ip address 172.16.14.4 255.255.255.0
 ip pim sparse-mode
 ip ospf network point-to-point
 ip ospf 1 area 0
 !
-interface GigabitEthernet1/0/2
+interface GigabitEthernet2
 no switchport
 ip address 172.16.24.4 255.255.255.0
 ip pim sparse-mode
 ip ospf network point-to-point
 ip ospf 1 area 0
 !
-interface GigabitEthernet1/0/10
+interface GigabitEthernet3
 switchport mode trunk
 !
 interface Vlan101

@@ -664,41 +664,136 @@ configure terminal
 vtp domain ccnp
 hostname DCSW1
 
+vrf definition green
+rd 1:1
+!
+address-family ipv4
+route-target export 1:1
+route-target import 1:1
+route-target export 1:1 stitching
+route-target import 1:1 stitching
+exit-address-family
+!
+address-family ipv6
+route-target export 1:1
+route-target import 1:1
+route-target export 1:1 stitching
+route-target import 1:1 stitching
+exit-address-family
+
+ip routing
+
+ip multicast-routing
+
+l2vpn evpn
+replication-type static
+router-id Loopback1
+default-gateway advertise
+
+l2vpn evpn instance 101 vlan-based
+encapsulation vxlan
+replication-type static
+
+l2vpn evpn instance 102 vlan-based
+encapsulation vxlan
+replication-type ingress
+
+vlan configuration 101
+member evpn-instance 101 vni 10101
+vlan configuration 102
+member evpn-instance 102 vni 10102
+vlan configuration 901
+member vni 50901
+
+interface Loopback0
+ip address 1.1.4.3 255.255.255.255
+ip ospf 1 area 0
+
+interface Loopback1
+ip address 1.1.43.1 255.255.255.255
+ip pim sparse-mode
+ip ospf 1 area 0
+
+
+
+
 interface g0/0
 description "Link to R3"
 no switchport
 ip address 10.1.1.2 255.255.255.0
+ip pim sparse-mode
+ip ospf network point-to-point
+ip ospf 1 area 0
 no shutdown
 
 interface g0/2
 description "Link to R4"
 no switchport
 ip address 10.2.1.1 255.255.255.0
-
-
-vlan 500
-exit
-
-interface vlan 500
-description "Servers"
-ip address 10.100.100.251 255.255.255.0
+ip pim sparse-mode
+ip ospf network point-to-point
+ip ospf 1 area 0
 no shutdown
-exit
 
-interface range g0/1-2
-switchport trunk encapsulation dot1q
+interface GigabitEthernet0/2
 switchport mode trunk
-no shutdown
-exit
-
+!
+interface Vlan101
+vrf forwarding green
+ip address 10.1.101.1 255.255.255.0
+!
+interface Vlan102
+vrf forwarding green
+ip address 10.1.102.1 255.255.255.0
+!
+interface Vlan901
+vrf forwarding green
+ip unnumbered Loopback1
+ipv6 enable
+no autostate
+!
+interface nve1
+no ip address
+source-interface Loopback1
+host-reachability protocol bgp
+member vni 10101 mcast-group 225.0.0.101
+member vni 10102 ingress-replication
+member vni 50901 vrf green
 
 router ospf 1
-network 14.1.0.0 0.0.255.255 area 0
-network 50.1.1.0 0.0.0.255 area 0
-passive-interface vlan 50
-exit
+router-id 1.1.4.3
+
+bgp log-neighbor-changes
+no bgp default ipv4-unicast
+neighbor 1.1.4.1 remote-as 65001
+neighbor 1.1.4.1 update-source Loopback0
+neighbor 1.1.4.2 remote-as 65001
+neighbor 1.1.4.2 update-source Loopback0
+
+address-family ipv4
+exit-address-family
+
+address-family l2vpn evpn
+neighbor 1.1.4.1 activate
+neighbor 1.1.4.1 send-community both
+neighbor 1.1.4.2 activate
+neighbor 1.1.4.2 send-community both
+exit-address-family
+
+address-family ipv4 vrf green
+advertise l2vpn evpn
+redistribute connected
+redistribute static
+exit-address-family
+!
+address-family ipv6 vrf green
+redistribute connected
+redistribute static
+advertise l2vpn evpn
+exit-address-family
+!
+ip pim rp-address 1.1.42.2
 end
-wr
 
 
 ```
@@ -710,32 +805,140 @@ enable
 configure terminal
 hostname DCSW2
 
+
+
+
+
+vrf definition green
+rd 1:1
+!
+address-family ipv4
+route-target export 1:1
+route-target import 1:1
+route-target export 1:1 stitching
+route-target import 1:1 stitching
+exit-address-family
+!
+address-family ipv6
+route-target export 1:1
+route-target import 1:1
+route-target export 1:1 stitching
+route-target import 1:1 stitching
+exit-address-family
+!
+ip routing
+!
+ip multicast-routing
+!
+l2vpn evpn
+replication-type static
+router-id Loopback1
+default-gateway advertise
+!
+l2vpn evpn instance 101 vlan-based
+encapsulation vxlan
+!
+l2vpn evpn instance 102 vlan-based
+encapsulation vxlan
+replication-type ingress
+!
+vlan configuration 101
+member evpn-instance 101 vni 10101
+vlan configuration 102
+member evpn-instance 102 vni 10102
+vlan configuration 901
+member vni 50901
+!
+interface Loopback0
+ip address 1.1.4.4 255.255.255.255
+ip ospf 1 area 0
+!
+interface Loopback1
+ip address 1.1.44.1 255.255.255.255
+ip pim sparse-mode
+ip ospf 1 area 0
+!
+
+
 interface g0/0 
 no switchport
 ip address 10.1.1.2 255.255.255.0
+ip pim sparse-mode
+ip ospf network point-to-point
+ip ospf 1 area 0
 no shutdown
 exit
 
 interface g0/1
 no switchport
 ip address 10.2.1.2 255.255.255.0
+ip pim sparse-mode
+ip ospf network point-to-point
+ip ospf 1 area 0
 no shutdown
 
+interface g0/2
+switchport mode trunk
 
 
-interface vlan 50
-ip address 50.1.1.252 255.255.255.0
-standby 10 ip 50.1.1.1
-no shutdown
-exit
+interface Vlan101
+vrf forwarding green
+ip address 10.1.101.1 255.255.255.0
+
+interface Vlan102
+vrf forwarding green
+ip address 10.1.102.1 255.255.255.0
+
+interface Vlan901
+vrf forwarding green
+ip unnumbered Loopback1
+ipv6 enable
+no autostate
+
+interface nve1
+no ip address
+source-interface Loopback1
+host-reachability protocol bgp
+member vni 10101 mcast-group 225.0.0.101
+member vni 50901 vrf green
+member vni 10102 ingress-replication
 
 router ospf 1
-network 14.1.0.0 0.0.255.255 area 0
-network 50.1.1.0 0.0.0.255 area 0
-passive-interface vlan 50
-exit
+router-id 172.16.255.4
+
+router bgp 65001
+bgp log-neighbor-changes
+no bgp default ipv4-unicast
+neighbor 1.1.4.1 remote-as 65001
+neighbor 1.1.4.1 update-source Loopback0
+neighbor 1.1.4.2 remote-as 65001
+neighbor 1.1.4.2 update-source Loopback0
+
+address-family ipv4
+exit-address-family
+
+address-family l2vpn evpn
+neighbor 1.1.4.1 activate
+neighbor 1.1.4.1 send-community both
+neighbor 1.1.4.2 activate
+neighbor 1.1.4.2 send-community both
+exit-address-family
+
+address-family ipv4 vrf green
+advertise l2vpn evpn
+redistribute connected
+redistribute static
+exit-address-family
+
+address-family ipv6 vrf green
+redistribute connected
+redistribute static
+advertise l2vpn evpn
+exit-address-family
+
+ip pim rp-address 1.1.42.2
+
 end
-wr
 
 
 ```
