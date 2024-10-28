@@ -14,5 +14,6 @@
 
 
 
+![image](src/images/main-topology-diagram.png "Lab Topology Diagram")
 
 
