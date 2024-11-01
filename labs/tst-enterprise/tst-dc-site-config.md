@@ -43,12 +43,16 @@ no shutdown
 
 router ospf 1
 exit
+
+
+
 ```
 
 # SP-02
 
 ```
 configure terminal
+hostname SP-02
 default interface eth1/1-4
 
 feature ospf
@@ -87,6 +91,8 @@ no shutdown
 
 router ospf 1
 exit
+
+
 ```
 
 ## LF-01
@@ -94,7 +100,7 @@ exit
 ```
 configure terminal
 hostname LF-01
-default interfaface eth 1/1-2
+default interface eth 1/1-2
 
 feature ospf
 
@@ -106,7 +112,7 @@ ip ospf network point-to-point
 ip router ospf 1 area 0
 no shutdown
 
-interace eth1/2
+interface eth1/2
 description "Link to SP-02"
 no switchport
 ip address 10.2.2.0/31
@@ -122,6 +128,31 @@ exit
 
 router ospf 1
 exit
+
+
+feature nv overlay
+interface nve 1
+no shutdown
+source-interface loopback 0
+exit
+
+feature vn-segment-vlan-based
+
+vlan 100
+vn-segment 5100
+exit
+
+
+interface nve 1
+member vni 5100
+ingress-replication protocol static
+peer-ip 100.4.4.4
+exit
+
+
+
+
+
 ```
 
 ## LF-02
@@ -141,7 +172,7 @@ ip ospf network point-to-point
 ip router ospf 1 area 0
 no shutdown 
 
-interace eth1/2
+interface eth1/2
 description "Link to SP-02"
 no switchport
 ip address 10.2.2.0/31
@@ -157,6 +188,25 @@ exit
 
 router ospf 1
 exit
+
+
+feature nv overlay
+
+
+interface nve 1
+no shutdown
+source-interface loopback 0
+exit
+
+feature vn-segment-vlan-based
+
+vlan 100
+vn-segment 5100
+exit
+
+
+
+
 ```
 
 
@@ -178,7 +228,7 @@ ip ospf network point-to-point
 ip router ospf 1 area 0
 no shutdown 
 
-interace eth1/2
+interface eth1/2
 description "Link to SP-02"
 no switchport
 ip address 10.2.3.0/31
@@ -194,6 +244,24 @@ exit
 
 router ospf 1
 exit
+
+
+feature nv overlay
+
+
+
+interface nve 1
+no shutdown
+source-interface loopback 0
+exit
+
+
+feature vn-segment-vlan-based
+
+vlan 100
+vn-segment 5100
+exit
+
 ```
 
 # LF-04
@@ -201,9 +269,33 @@ exit
 ```
 configure terminal 
 hostname LF-04
-default interface eth 1/1-2
+default interface e1/1-2,e1/8-9
+
 
 feature ospf
+feature pim
+feature lacp
+
+
+
+interface port-channel 1
+no switchport
+ip address 10.0.1.4/29
+ip router ospf 1 area 0
+ip ospf network point-to-point
+no shutdown
+exit
+
+interface e1/8-9
+no switchport
+channel-group 1 mode on
+no shutdown
+
+exit
+
+ip route 0.0.0.0 0.0.0.0 port-channel 1 10.0.1.1
+
+
 
 interface eth1/1
 description "Link to SP-01"
@@ -230,7 +322,32 @@ exit
 router ospf 1
 exit
 
+
+feature nv overlay
+interface nve 1
+no shutdown
+source-interface loopback 0
+exit
+
+feature vn-segment-vlan-based
+
+vlan 100
+vn-segment 5100
+exit
+
+
+```
+# TST-OB-MGMT-SW-01
+
 ```
 
+configure terminal
+hostname tst-ob-mgmt-sw-01
+
+ip dhcp pool spine
+
+ip dhcp pool leaf
 
 
+
+```
