@@ -1,4 +1,6 @@
 # Modeling Sandbox
 
-Welcome to the Modeling Sandbox repo. Here I post boilerplate configurations for network appliances. I am also working on sample labs which will contain all the code necessary to stand up every node. 
+Welcome to my Modeling Sandbox documentation repository. Here, I post various network engineering or cyber security labs.
+
+The main emulation platform used in the labs is Gns3 (gns3.com).
 
