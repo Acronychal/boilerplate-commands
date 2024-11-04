@@ -351,3 +351,89 @@ ip dhcp pool leaf
 
 
 ```
+
+# TST-HA-FGT-01
+
+```
+config system global
+set hostname tst-ha-fgt-01
+set timezone 12
+end
+config system dns
+set primary 8.8.8.8
+set secondary 1.1.1.1
+end
+
+
+config system interface
+edit "lan-switch"
+set vdom "root"
+set ip 10.200.1.1 255.255.255.0
+set allowaccess ping https ssh
+set type switch
+set device-identification enable
+set lldp-transmission enable
+set role lan
+set snmp-index 15
+next
+end
+
+
+```
+# TST-HA-FGT-02
+
+```
+config system global
+set hostname tst-ha-fgt-02
+set timezone 12
+end
+config system dns
+set primary 8.8.8.8
+set secondary 1.1.1.1
+end
+
+```
+
+
+# TST-FGT-01
+
+```
+config system global
+set hostname tst-fgt-01
+set timezone 12
+end
+config system dns
+set primary 8.8.8.8
+set secondary 1.1.1.1
+end
+
+```
+
+# TST-FGT-02
+
+```
+config system global
+set hostname tst-fgt-02
+set timezone 12
+end
+config system dns
+set primary 8.8.8.8
+set secondary 1.1.1.1
+end
+
+```
+
+# TST-FGT-03
+
+```
+config system global
+set hostname tst-ha-fgt-03
+set timezone 12
+end
+config system dns
+set primary 8.8.8.8
+set secondary 1.1.1.1
+end
+
+```
+
