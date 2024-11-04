@@ -29,7 +29,7 @@
     - 1 Ubuntu 24.10 desktop client
 
 
-The network diagram.
+## The network diagram.
 
 
 
@@ -43,47 +43,44 @@ The network diagram.
 
 - Configure spine-leaf
 - Configure service leaf
-- install proxmox on cluster 1
-- install proxmox backup on pbs
-- install truenas on nfs 1
-- install proxmox on sandbox
-- install and configure pfsense ha pair
-- configure all fortios firewalls for standard outbound access
-- configure fortinet ha pair to dc01
-- configure dc01 fsmo roles
-  - adds
-  - dns
-- configure active directory tst-ent.lan
-  - domain user accounts
-  - domain it admin
-  - domain access across remote sites
-- configure dcnm
-  - implement fabric via mgmt network
-- verify access to proxmox leaf 1
-  - setup admin account
-  - setup storage
-  - setup iso repo
-  - setup lxc containers
-  - setup vm (test)
+- Install proxmox on cluster 1
+- Install proxmox backup on pbs
+- Install truenas on nfs 1
+- Install proxmox on sandbox
+- Install and configure pfsense ha pair
+- Configure all fortios firewalls for standard outbound access
+- Configure fortinet ha pair to dc01
+- Configure dc01 fsmo roles
+  - ADDS
+  - DNS
+- Configure active directory tst-ent.lan
+  - Domain user accounts
+  - Domain it admin
+  - Domain access across remote sites
+- Configure dcnm
+  - Implement fabric via mgmt network
+- Verify access to proxmox leaf 1
+  - Setup admin account
+  - Setup storage
+  - Setup iso repo
+  - Setup lxc containers
+  - Setup vm (test)
 - verify access to proxmox pbs and truenas 
-  - setup pbs backups
-  - setup truenas nfs targets
-    - cluster
-    - sandbox
+  - Setup pbs backups
+  - Setup truenas nfs targets
+    - Cluster
+    - Sandbox
 
 
 # to do 
-  - implement ansible
-    - integration
-      - host
-      - network appliance 
+  - Implement Ansible
+    - Integration
+      - Host
+      - Network appliance 
     - playbooks
-      - ping playbooks
-      - package deployment playbooks
-      - network state
-      - network changes
-      
-  - 
-
+      - Ping
+      - Package deployment playbooks
+      - Network state
+      - Network changes
 
 
