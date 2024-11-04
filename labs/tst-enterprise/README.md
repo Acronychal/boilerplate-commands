@@ -41,4 +41,49 @@ The network diagram.
 
 ## Lab Instructions
 
+- Configure spine-leaf
+- Configure service leaf
+- install proxmox on cluster 1
+- install proxmox backup on pbs
+- install truenas on nfs 1
+- install proxmox on sandbox
+- install and configure pfsense ha pair
+- configure all fortios firewalls for standard outbound access
+- configure fortinet ha pair to dc01
+- configure dc01 fsmo roles
+  - adds
+  - dns
+- configure active directory tst-ent.lan
+  - domain user accounts
+  - domain it admin
+  - domain access across remote sites
+- configure dcnm
+  - implement fabric via mgmt network
+- verify access to proxmox leaf 1
+  - setup admin account
+  - setup storage
+  - setup iso repo
+  - setup lxc containers
+  - setup vm (test)
+- verify access to proxmox pbs and truenas 
+  - setup pbs backups
+  - setup truenas nfs targets
+    - cluster
+    - sandbox
+
+
+# to do 
+  - implement ansible
+    - integration
+      - host
+      - network appliance 
+    - playbooks
+      - ping playbooks
+      - package deployment playbooks
+      - network state
+      - network changes
+      
+  - 
+
+
 
