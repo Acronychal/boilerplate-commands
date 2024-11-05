@@ -437,3 +437,34 @@ end
 
 ```
 
+
+# TST-ASA-01
+
+```
+enable
+configure terminal
+hostname tst-asa-01
+enable password <labpassword>
+username sandboxadmin password <labpassword> privilege 15
+http server enable
+http 10.100.2.0 255.255.255.0 management
+aaa authentication ssh console LOCAL
+crypto key generate rsa modulus 1024
+
+interface g0/0 
+ip address dhcp
+description "WAN-ISP"
+nameif outside
+
+interface g0/1
+description "LAN"
+ip address 10.100.4.1 255.255.255.0
+nameif inside
+
+interface managment 0/0
+ip address 10.100.2.1 255.255.255.0
+nameif management 
+security-level 100
+no shutdown
+
+```
