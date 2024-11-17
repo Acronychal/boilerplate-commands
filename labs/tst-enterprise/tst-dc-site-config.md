@@ -141,6 +141,13 @@ feature vn-segment-vlan-based
 vlan 100
 vn-segment 5100
 exit
+vlan 110
+vn-segment 5110
+exit
+vlan 200
+vn-segment 5200
+exit
+
 
 
 interface nve 1
@@ -375,7 +382,6 @@ set device-identification enable
 set lldp-transmission enable
 set role lan
 set snmp-index 15
-next
 end
 
 
