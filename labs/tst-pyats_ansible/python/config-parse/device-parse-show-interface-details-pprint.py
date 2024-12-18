@@ -12,10 +12,10 @@ device_interface_details = {}
 # Loop over each device in the network testbed
 for device in testbed.devices:
     # Connect to the device
-    testbed.devices[device].connect()
+    testbed.devices[device].connect(learn_hostname=True, log_stdout=False)
 
     # Run the "show interfaces" command on the device
-    interface_details = testbed.devices[device].parse("show interfaces")
+    interface_details = testbed.devices[device].learn("interface")
     #   Note: see available commands to parse for each platform at
     #         https://pubhub.devnetcloud.com/media/pyats-packages/docs/genie/genie_libs/#/parsers
     #   Extra Note: IOS uses "show interfaces" NX-OS uses "show interface"
