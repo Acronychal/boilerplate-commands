@@ -1,0 +1,37 @@
+
+# Custom Bash Prompt Configuration for Ubuntu 22.04
+WHITE='\[\033[1;37m\]'
+LIGHTRED='\[\033[1;31m\]'
+LIGHTGREEN='\[\033[1;32m\]'
+LIGHTBLUE='\[\033[1;34m\]'
+DEFAULT='\[\033[0m\]'
+
+cLINES=$WHITE
+cBRACKETS=$WHITE
+cERROR=$LIGHTRED
+cSUCCESS=$LIGHTGREEN
+cHST=$LIGHTGREEN
+cPWD=$LIGHTBLUE
+cCMD=$DEFAULT
+cSKULL=$WHITE
+
+promptcmd() {
+    PREVRET=$?
+    PS1="\n"
+    if [ $PREVRET -ne 0 ]; then
+        PS1="${PS1}${cBRACKETS}[${cERROR}x${cBRACKETS}]${cLINES}\342\224\200"
+    else
+        PS1="${PS1}${cBRACKETS}[${cSUCCESS}*${cBRACKETS}]${cLINES}\342\224\200"
+    fi
+    # Add skulls around hostname, with the second one white
+    PS1="${PS1}${cBRACKETS}[ 💀 ${cHST}\h ${cSKULL}💀 ${cBRACKETS}]${cLINES}\342\224\200"
+    PS1="${PS1}[${cPWD}\w${cBRACKETS}]"
+
+    # Add Python virtual environment if active
+    if [ -n "$VIRTUAL_ENV" ]; then
+        PS1="${PS1}${cLINES}\342\224\200(${cSUCCESS}$(basename $VIRTUAL_ENV)${cLINES})"
+    fi
+
+    PS1="${PS1}\n${cLINES}\342\224\224\342\224\200\342\224\200> ${cCMD}"
+}
+PROMPT_COMMAND=promptcmd
