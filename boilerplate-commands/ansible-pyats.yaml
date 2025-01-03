@@ -1,0 +1,37 @@
+---
+  name: Ansible PyATS and ntc demo
+  hosts: r1
+  gather_facts: false
+  
+  tasks:
+
+    name: Parse output using PyATS
+
+      ansible.utils.cli_parse:
+        command: show version
+        parser:
+          name: ansible.netcommon.pyats
+      register: sh_ver_parsed
+
+    name: Print show version parsed
+
+      ansible.builtin.debug:
+        msg:
+          - "{{ sh_ver_parsed.parsed }}"
+            "Version is: {{ sh_ver_parsed.parsed.version.version }}"
+            "System image is: {{ sh_ver_parsed.parsed.version.system_image }}"
+
+    name: Parse using NTC templates
+
+      ansible.utils.cli_parse:
+        command: show version
+        parser:
+          name: ansible.netcommon.ntc_templates
+      register: sh_ver_parsed_ntc
+
+    name: Print show version parsed
+
+      ansible.builtin.debug:
+        msg:
+          - "{{ sh_ver_parsed_ntc.parsed }}"
+            "{{ sh_ver_parsed_ntc.parsed[0].hostname }}"

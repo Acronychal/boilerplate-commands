@@ -1,0 +1,72 @@
+
+devices:
+  SW-03:
+    connections:
+      cli:
+        ip: 192.168.122.56
+        protocol: ssh
+    credentials:
+      default:
+        password: '%ASK{}'
+        username: admin
+      enable:
+        password: ''
+    os: linux
+    type: linux
+
+
+  SW-02:
+    connections:
+      cli:
+        ip: 192.168.122.119
+        protocol: ssh
+    credentials:
+      default:
+        password: '%ASK{}'
+        username: admin
+      enable:
+        password: ''
+    os: ios
+    type: iosv
+
+
+  SW-01:
+    connections:
+      cli:
+        ip: 192.168.122.156
+        protocol: ssh
+    credentials:
+      default:
+        password: '%ASK{}'
+        username: admin
+      enable:
+        password: ''
+    os: ios
+    type: iosv
+
+  CORE-01:
+    connections:
+      cli:
+        ip: 192.168.122.88
+        protocol: ssh
+    credentials:
+      default:
+        password: '%ASK{}'
+        username: admin
+      enable:
+        password: ''
+    os: nxos
+    type: nxosv
+  CORE-02:
+    connections:
+      cli:
+        ip: 192.168.122.147
+        protocol: ssh
+    credentials:
+      default:
+        password: '%ASK{}'
+        username: admin
+      enable:
+        password: ''
+    os: nxos
+    type: nxosv
