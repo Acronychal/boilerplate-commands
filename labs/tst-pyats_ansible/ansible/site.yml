@@ -1,0 +1,9 @@
+---
+- hosts: spine
+  roles:
+    - role: spine
+
+- hosts: leaf
+  roles: 
+    - role: leaf
+    

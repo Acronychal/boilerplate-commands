@@ -1,0 +1,114 @@
+---
+# tasks file for spine
+
+-   name: CONFIGURE SPINE HOSTNAMES
+    cisco.nxos.nxos_hostname:
+        config:
+          hostname: "{{ host_name }}"
+
+-   name: CONFIGURE INTERFACE LINKS TO LEAFS
+    cisco.nxos.nxos_interfaces:
+        config:
+        -   name: "{{ item.interface }}"
+            enabled: true 
+            description: "{{ item.description }}"
+    loop: "{{ interfaces }}"        
+
+-   name: CONFIGURE LEAF LINK ADDR
+    cisco.nxos.nxos_l3_interfaces:
+        config:
+        -   name: "{{ item.interface }}"
+            ipv4: 
+            -   address: "{{ item.addr }}/{{ item.mask }}"
+    loop: "{{ interfaces }}"
+
+
+
+-   name: ENABLE FEATURES
+    cisco.nxos.nxos_feature:
+        feature: "{{ item.feature }}"
+    loop: "{{ features }}" 
+
+-   name: ENABLE FEATURES
+    cisco.nxos.nxos_config:
+        lines: "feature nv overlay"
+
+-   name: CONFIGURE LOOPBACK INTERFACES
+    cisco.nxos.nxos_interfaces:
+        config:
+        -   name: "{{ item.interface }}"
+            enabled: true
+    loop: "{{ loopbacks }}"
+
+-   name: CONFIGURE INTERFACE IP ADDR
+    cisco.nxos.nxos_l3_interfaces:
+        config:
+        -   name: "{{ item.interface }}" 
+            ipv4:
+            -   address: "{{ item.addr }}/{{ item.mask }}"
+    loop: "{{ loopbacks }}"
+
+-   name: ASSOCIATE INTERFACES WITH OSPF PROCESS
+    cisco.nxos.nxos_ospf_interfaces:
+        config:
+        -   name: "{{ item.interface }}"
+            address_family:
+            -   afi: ipv4
+                processes:
+                -   process_id: "{{ ospf_process_id }}"
+                    area:
+                        area_id: "{{ ospf_area }}"
+    loop: "{{ loopbacks }}" 
+
+-   name: ASSOCIATE LINKS WITH OSPF PROCESS
+    cisco.nxos.nxos_ospf_interfaces:
+        config:
+        -   name: "{{ item.interface }}"
+            address_family:
+            -   afi: ipv4
+                processes:
+                -   process_id: "{{ ospf_process_id }}"
+                    area:
+                        area_id: "{{ ospf_area }}"
+    loop: "{{ interfaces }}"       
+
+-   name: CONFIGURE PIM INTERFACES
+    cisco.nxos.nxos_pim_interface:
+        interface: "{{ item.interface }}"
+        sparse: true
+    loop: "{{ loopbacks }}"
+
+-   name: ENABLE NV OVERLAY EVPN
+    cisco.nxos.nxos_evpn_global:
+        nv_overlay_evpn: true
+
+-   name: CONFIGURE BGP ASN AND ROUTER ID
+    cisco.nxos.nxos_bgp_global:
+        config:
+            as_number: "{{ asn }}"
+            router_id: "{{ router_id }}"
+            neighbors:
+            -   neighbor_address: "{{ item.neighbor }}"
+                remote_as: "{{ item.remote_as }}"
+                update_source: "{{ item.update_source }}" 
+        state: merged
+    loop: "{{ bgp_neighbors }}"
+
+-   name: CONFIGURE BGP NEIGHBORS
+    cisco.nxos.nxos_bgp_neighbor_address_family:
+        config:
+            as_number: "{{ asn }}"
+            neighbors:
+            -   neighbor_address: "{{ item.neighbor }}"
+                address_family:
+                -   afi: l2vpn
+                    safi: evpn
+                    send_community:
+                        both: true
+                    route_reflector_client: true
+    loop: "{{ bgp_neighbors }}"
+
+-   name: SAVE RUN CONFIG TO STARTUP CONFIG
+    cisco.nxos.nxos_config:
+        save_when: always
+        

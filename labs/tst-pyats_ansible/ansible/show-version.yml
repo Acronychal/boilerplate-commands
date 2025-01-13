@@ -1,0 +1,18 @@
+---
+- name: Show Version on Stack
+  hosts: all
+  gather_facts: false
+  
+  tasks:
+    - name: Gather Version
+      ansible.utils.cli_parse:
+        command: show version
+        parser:
+          name: ansible.netcommon.pyats
+      register: sh_ver_parsed
+   
+    - name: Print Show Version Parsed
+
+      ansible.builtin.debug:
+        msg:
+          - "{{ sh_ver_parsed }}"

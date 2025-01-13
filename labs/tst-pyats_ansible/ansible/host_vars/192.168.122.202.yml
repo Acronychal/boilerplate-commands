@@ -1,0 +1,16 @@
+---
+#  variables for sw-03 N0k
+
+host_name: "SW-03-ANSIBLE"
+
+router_id: 10.10.10.23
+
+loopbacks:
+  - { interface: loopback0, addr: 10.10.10.23, mask: 32 }
+  - { interface: loopback1, addr: 2.2.2.3, mask: 32 }
+
+# links to spine
+
+interfaces:
+  - { interface: ethernet1/1, addr: 10.1.3.2, mask: 30, description: "p2p-CORE-01" } 
+  - { interface: ethernet1/2, addr: 10.2.3.2, mask: 30, description: "p2p-CORE-02" } 
